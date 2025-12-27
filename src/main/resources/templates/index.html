@@ -5,351 +5,170 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Energy Forecast AI</title>
     
-    <!-- Bootstrap 5 -->
+    <!-- Bootstrap 5 (giữ lại để giao diện đẹp) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            margin-top: 30px;
-            margin-bottom: 30px;
-            padding: 30px;
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+            padding: 20px;
         }
         
         .header {
             text-align: center;
             margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-        
-        .header h1 {
-            color: #2c3e50;
-            font-weight: bold;
-        }
-        
-        .header p {
-            color: #7f8c8d;
-            font-size: 1.1rem;
-        }
-        
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-            transition: transform 0.3s;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .card-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 15px 15px 0 0 !important;
-            padding: 15px 20px;
-            font-weight: bold;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            padding: 10px 25px;
-            border-radius: 25px;
-            font-weight: bold;
-        }
-        
-        .btn-primary:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        
-        .btn-success {
-            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-            border: none;
-            padding: 10px 25px;
-            border-radius: 25px;
-            font-weight: bold;
-        }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
-            border: none;
-            padding: 10px 25px;
-            border-radius: 25px;
-            font-weight: bold;
-        }
-        
-        .metric-card {
-            text-align: center;
             padding: 20px;
-            border-radius: 15px;
-            margin: 10px 0;
-        }
-        
-        .metric-card.lstm {
-            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            background-color: #007bff;
             color: white;
-        }
-        
-        .metric-card.arima {
-            background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
-            color: white;
-        }
-        
-        .metric-value {
-            font-size: 2rem;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        
-        .metric-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-        
-        .plot-container {
-            background: #f8f9fa;
             border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-            font-family: monospace;
-            white-space: pre-wrap;
-            overflow-x: auto;
         }
         
-        .loading {
+        .step {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .step h4 {
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .result-box {
+            background: #f8f9fa;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .alert {
+            margin-top: 10px;
+        }
+        
+        .metric-box {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px;
             text-align: center;
-            padding: 20px;
-        }
-        
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .nav-tabs {
-            border-bottom: 2px solid #dee2e6;
-        }
-        
-        .nav-tabs .nav-link {
-            border: none;
-            color: #667eea;
-            font-weight: bold;
-            padding: 10px 20px;
-        }
-        
-        .nav-tabs .nav-link.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 10px 10px 0 0;
-        }
-        
-        .forecast-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-        
-        .data-table {
-            max-height: 300px;
-            overflow-y: auto;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
+        <!-- Header đơn giản -->
         <div class="header">
-            <h1><i class="bi bi-lightning-charge"></i> Energy Consumption Forecast AI</h1>
-            <p>Predict energy consumption using LSTM and ARIMA models</p>
+            <h2>Energy Forecast AI</h2>
+            <p>Dự báo tiêu thụ điện năng bằng AI</p>
         </div>
 
-        <!-- Navigation Tabs -->
-        <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload">
-                    <i class="bi bi-upload"></i> Upload Data
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="analyze-tab" data-bs-toggle="tab" data-bs-target="#analyze">
-                    <i class="bi bi-bar-chart"></i> Analyze
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="train-tab" data-bs-toggle="tab" data-bs-target="#train">
-                    <i class="bi bi-cpu"></i> Train Models
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="forecast-tab" data-bs-toggle="tab" data-bs-target="#forecast">
-                    <i class="bi bi-graph-up"></i> Forecast
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="compare-tab" data-bs-toggle="tab" data-bs-target="#compare">
-                    <i class="bi bi-trophy"></i> Compare
-                </button>
-            </li>
-        </ul>
-
-        <!-- Tab Content -->
-        <div class="tab-content" id="myTabContent">
+        <!-- Bước 1: Upload dữ liệu -->
+        <div class="step" id="step-upload">
+            <h4>1. Tải lên dữ liệu</h4>
+            <p>Chọn file CSV chứa dữ liệu tiêu thụ điện</p>
             
-            <!-- Upload Tab -->
-            <div class="tab-pane fade show active" id="upload" role="tabpanel">
-                <div class="card">
-                    <div class="card-header">
-                        Upload Energy Consumption Data
+            <div class="alert alert-info">
+                <strong>Lưu ý:</strong> Tải dữ liệu từ 
+                <a href="https://www.kaggle.com/datasets/nicholasjhana/energy-consumption-generation-prices-and-weather" 
+                   target="_blank">Kaggle Energy Dataset</a>
+            </div>
+            
+            <form id="uploadForm">
+                <div class="mb-3">
+                    <input class="form-control" type="file" id="fileInput" accept=".csv">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    Upload & Phân tích
+                </button>
+            </form>
+            
+            <div id="uploadResult"></div>
+        </div>
+
+        <!-- Bước 2: Xem thông tin dữ liệu -->
+        <div class="step" id="step-analyze" style="display: none;">
+            <h4>2. Thông tin dữ liệu</h4>
+            <p>Xem tổng quan về dữ liệu đã upload</p>
+            
+            <button id="loadSummaryBtn" class="btn btn-info">
+                Hiển thị thông tin
+            </button>
+            
+            <div id="dataSummary">
+                <p class="text-muted">Chưa có dữ liệu. Hãy upload file trước.</p>
+            </div>
+        </div>
+
+        <!-- Bước 3: Huấn luyện mô hình -->
+        <div class="step" id="step-train" style="display: none;">
+            <h4>3. Huấn luyện mô hình</h4>
+            <p>Chọn mô hình để huấn luyện</p>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <h5>LSTM Model</h5>
+                        <p>Dự báo chuỗi thời gian</p>
+                        <button id="trainLSTMBtn" class="btn btn-primary">
+                            Huấn luyện LSTM
+                        </button>
                     </div>
-                    <div class="card-body">
-                        <p>Upload your CSV file containing energy consumption data. The system will automatically analyze it.</p>
-                        
-                        <div class="alert alert-info">
-                            <strong>Note:</strong> You can download sample data from 
-                            <a href="https://www.kaggle.com/datasets/nicholasjhana/energy-consumption-generation-prices-and-weather" 
-                               target="_blank" class="alert-link">
-                                Kaggle Energy Dataset
-                            </a>
-                        </div>
-                        
-                        <form id="uploadForm">
-                            <div class="mb-3">
-                                <label for="fileInput" class="form-label">Select CSV File</label>
-                                <input class="form-control" type="file" id="fileInput" accept=".csv">
-                            </div>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-cloud-upload"></i> Upload & Process
-                            </button>
-                        </form>
-                        
-                        <div id="uploadResult" class="mt-3"></div>
+                    <div id="lstmResult"></div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <h5>ARIMA Model</h5>
+                        <p>Phân tích chuỗi thời gian</p>
+                        <button id="trainARIMABtn" class="btn btn-warning">
+                            Huấn luyện ARIMA
+                        </button>
                     </div>
+                    <div id="arimaResult"></div>
                 </div>
             </div>
+        </div>
 
-            <!-- Analyze Tab -->
-            <div class="tab-pane fade" id="analyze" role="tabpanel">
-                <div class="card">
-                    <div class="card-header">
-                        Data Analysis
-                    </div>
-                    <div class="card-body">
-                        <div class="text-center mb-3">
-                            <button id="loadSummaryBtn" class="btn btn-primary">
-                                <i class="bi bi-eye"></i> Load Data Summary
-                            </button>
-                        </div>
-                        
-                        <div id="dataSummary"></div>
-                        
-                        <div class="alert alert-warning mt-3">
-                            <i class="bi bi-info-circle"></i>
-                            <strong>Note:</strong> This is a simplified demo. In a real application, 
-                            you would see interactive charts and detailed statistics here.
-                        </div>
-                    </div>
+        <!-- Bước 4: Tạo dự báo -->
+        <div class="step" id="step-forecast" style="display: none;">
+            <h4>4. Tạo dự báo</h4>
+            <p>Dự báo tiêu thụ điện trong tương lai</p>
+            
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label>Số giờ dự báo:</label>
+                    <input type="number" id="forecastHours" class="form-control" value="24" min="1" max="168">
+                </div>
+                <div class="col-md-8 d-flex align-items-end">
+                    <button id="generateForecastBtn" class="btn btn-success">
+                        Tạo dự báo
+                    </button>
                 </div>
             </div>
+            
+            <div id="forecastResult"></div>
+        </div>
 
-            <!-- Train Tab -->
-            <div class="tab-pane fade" id="train" role="tabpanel">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                LSTM Model Training
-                            </div>
-                            <div class="card-body">
-                                <p>Long Short-Term Memory network for sequence prediction.</p>
-                                <button id="trainLSTMBtn" class="btn btn-primary w-100">
-                                    <i class="bi bi-play-circle"></i> Train LSTM Model
-                                </button>
-                                <div id="lstmResult" class="mt-3"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                ARIMA Model Training
-                            </div>
-                            <div class="card-body">
-                                <p>AutoRegressive Integrated Moving Average for time series.</p>
-                                <button id="trainARIMABtn" class="btn btn-danger w-100">
-                                    <i class="bi bi-play-circle"></i> Train ARIMA Model
-                                </button>
-                                <div id="arimaResult" class="mt-3"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Forecast Tab -->
-            <div class="tab-pane fade" id="forecast" role="tabpanel">
-                <div class="card">
-                    <div class="card-header">
-                        Generate Forecast
-                    </div>
-                    <div class="card-body">
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <label class="form-label">Forecast Horizon (hours)</label>
-                                <input type="number" id="forecastHours" class="form-control" value="24" min="1" max="168">
-                            </div>
-                            <div class="col-md-6 d-flex align-items-end">
-                                <button id="generateForecastBtn" class="btn btn-success w-100">
-                                    <i class="bi bi-lightning"></i> Generate Forecast
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div id="forecastResult"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Compare Tab -->
-            <div class="tab-pane fade" id="compare" role="tabpanel">
-                <div class="card">
-                    <div class="card-header">
-                        Model Comparison
-                    </div>
-                    <div class="card-body">
-                        <div class="text-center mb-3">
-                            <button id="compareModelsBtn" class="btn btn-primary">
-                                <i class="bi bi-arrow-repeat"></i> Compare Models
-                            </button>
-                        </div>
-                        
-                        <div id="comparisonResult"></div>
-                    </div>
-                </div>
+        <!-- Bước 5: So sánh mô hình -->
+        <div class="step" id="step-compare" style="display: none;">
+            <h4>5. So sánh mô hình</h4>
+            <p>Xem mô hình nào tốt hơn</p>
+            
+            <button id="compareModelsBtn" class="btn btn-dark">
+                So sánh LSTM vs ARIMA
+            </button>
+            
+            <div id="comparisonResult" class="mt-3">
+                <p class="text-muted">Huấn luyện cả 2 mô hình trước để so sánh.</p>
             </div>
         </div>
     </div>
@@ -357,55 +176,43 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Custom JavaScript -->
+    <!-- JavaScript đơn giản -->
     <script>
-        // Global state
-        let currentData = null;
-        let isTraining = false;
-        
-        // Show loading spinner
-        function showLoading(elementId) {
+        // Hiển thị loading
+        function showLoading(elementId, message = "Đang xử lý...") {
             const element = document.getElementById(elementId);
             if (element) {
                 element.innerHTML = `
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        <p>Processing...</p>
+                    <div class="alert alert-info">
+                        <div class="spinner-border spinner-border-sm" role="status"></div>
+                        ${message}
                     </div>
                 `;
             }
         }
-        
-        // Show error message
-        function showError(message, elementId) {
+
+        // Hiển thị kết quả
+        function showResult(elementId, message, isError = false) {
             const element = document.getElementById(elementId);
             if (element) {
+                const alertType = isError ? 'alert-danger' : 'alert-success';
                 element.innerHTML = `
-                    <div class="alert alert-danger">
-                        <i class="bi bi-exclamation-triangle"></i> ${message}
+                    <div class="alert ${alertType}">
+                        ${message}
                     </div>
                 `;
             }
         }
-        
-        // Show success message
-        function showSuccess(message, elementId) {
-            const element = document.getElementById(elementId);
-            if (element) {
-                element.innerHTML = `
-                    <div class="alert alert-success">
-                        <i class="bi bi-check-circle"></i> ${message}
-                    </div>
-                `;
-            }
+
+        // Hiển thị tất cả các bước
+        function showAllSteps() {
+            document.getElementById('step-analyze').style.display = 'block';
+            document.getElementById('step-train').style.display = 'block';
+            document.getElementById('step-forecast').style.display = 'block';
+            document.getElementById('step-compare').style.display = 'block';
         }
-        
-        // Format number
-        function formatNumber(num) {
-            return parseFloat(num).toFixed(2);
-        }
-        
-        // Upload form handler
+
+        // 1. Xử lý upload file
         document.getElementById('uploadForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -413,16 +220,16 @@
             const file = fileInput.files[0];
             
             if (!file) {
-                showError('Please select a file first', 'uploadResult');
+                showResult('uploadResult', 'Vui lòng chọn file CSV', true);
                 return;
             }
             
-            const formData = new FormData();
-            formData.append('file', file);
-            
-            showLoading('uploadResult');
+            showLoading('uploadResult', 'Đang upload và phân tích...');
             
             try {
+                const formData = new FormData();
+                formData.append('file', file);
+                
                 const response = await fetch('/upload', {
                     method: 'POST',
                     body: formData
@@ -431,24 +238,19 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    currentData = result;
-                    showSuccess(result.message, 'uploadResult');
-                    
-                    // Switch to analyze tab
-                    const analyzeTab = new bootstrap.Tab(document.getElementById('analyze-tab'));
-                    analyzeTab.show();
-                    
+                    showResult('uploadResult', ` ${result.message}`);
+                    showAllSteps();
                 } else {
-                    showError(result.message, 'uploadResult');
+                    showResult('uploadResult', ` ${result.message}`, true);
                 }
             } catch (error) {
-                showError('Upload failed: ' + error.message, 'uploadResult');
+                showResult('uploadResult', `Lỗi: ${error.message}`, true);
             }
         });
-        
-        // Load data summary
+
+        // 2. Load thông tin dữ liệu
         document.getElementById('loadSummaryBtn').addEventListener('click', async () => {
-            showLoading('dataSummary');
+            showLoading('dataSummary', 'Đang tải thông tin...');
             
             try {
                 const response = await fetch('/summary');
@@ -457,181 +259,110 @@
                 if (result.success) {
                     const summary = result.data;
                     let html = `
-                        <div class="card">
-                            <div class="card-body">
-                                <h5>Data Summary</h5>
-                                <table class="table">
-                                    <tr>
-                                        <th>Filename:</th>
-                                        <td>${result.filename}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Target Column:</th>
-                                        <td>${result.targetColumn}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Row Count:</th>
-                                        <td>${summary.rowCount}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Column Count:</th>
-                                        <td>${summary.columnCount}</td>
-                                    </tr>
-                                </table>
+                        <div class="result-box">
+                            <p><strong>File:</strong> ${result.filename}</p>
+                            <p><strong>Cột mục tiêu:</strong> ${result.targetColumn}</p>
+                            <p><strong>Số dòng:</strong> ${summary.rowCount}</p>
+                            <p><strong>Số cột:</strong> ${summary.columnCount}</p>
                     `;
                     
-                    if (summary.statistics) {
-                        html += `<h6 class="mt-4">Statistics</h6>`;
-                        for (const [column, stats] of Object.entries(summary.statistics)) {
-                            html += `
-                                <div class="mb-2">
-                                    <strong>${column}:</strong><br>
-                                    Mean: ${formatNumber(stats.mean)} | 
-                                    Min: ${formatNumber(stats.min)} | 
-                                    Max: ${formatNumber(stats.max)}
-                                </div>
-                            `;
-                        }
+                    if (summary.statistics && result.targetColumn && summary.statistics[result.targetColumn]) {
+                        const stats = summary.statistics[result.targetColumn];
+                        html += `
+                            <h6>Thống kê (${result.targetColumn}):</h6>
+                            <div class="row">
+                                <div class="col-3"><div class="metric-box">Trung bình<br><strong>${parseFloat(stats.mean).toFixed(2)}</strong></div></div>
+                                <div class="col-3"><div class="metric-box">Min<br><strong>${parseFloat(stats.min).toFixed(2)}</strong></div></div>
+                                <div class="col-3"><div class="metric-box">Max<br><strong>${parseFloat(stats.max).toFixed(2)}</strong></div></div>
+                                <div class="col-3"><div class="metric-box">Số lượng<br><strong>${stats.count}</strong></div></div>
+                            </div>
+                        `;
                     }
                     
-                    html += `</div></div>`;
+                    html += `</div>`;
                     document.getElementById('dataSummary').innerHTML = html;
                 } else {
-                    showError('No data loaded', 'dataSummary');
+                    showResult('dataSummary', result.message, true);
                 }
             } catch (error) {
-                showError('Error loading summary: ' + error.message, 'dataSummary');
+                showResult('dataSummary', `Lỗi: ${error.message}`, true);
             }
         });
-        
-        // Train LSTM model
+
+        // 3. Huấn luyện LSTM
         document.getElementById('trainLSTMBtn').addEventListener('click', async () => {
-            if (isTraining) return;
-            isTraining = true;
-            
-            showLoading('lstmResult');
+            showLoading('lstmResult', 'Đang huấn luyện LSTM...');
             document.getElementById('trainLSTMBtn').disabled = true;
             
             try {
-                const response = await fetch('/train/lstm', {
-                    method: 'POST'
-                });
-                
+                const response = await fetch('/train/lstm', { method: 'POST' });
                 const result = await response.json();
                 
                 if (result.success) {
                     const metrics = result.metrics;
                     document.getElementById('lstmResult').innerHTML = `
-                        <div class="alert alert-success">
-                            <h6><i class="bi bi-check-circle"></i> ${result.message}</h6>
-                            <div class="row mt-3">
-                                <div class="col-6">
-                                    <div class="metric-card lstm">
-                                        <div class="metric-label">MAE</div>
-                                        <div class="metric-value">${formatNumber(metrics.mae)}</div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="metric-card lstm">
-                                        <div class="metric-label">RMSE</div>
-                                        <div class="metric-value">${formatNumber(metrics.rmse)}</div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="metric-card lstm">
-                                        <div class="metric-label">MAPE</div>
-                                        <div class="metric-value">${formatNumber(metrics.mape)}%</div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="metric-card lstm">
-                                        <div class="metric-label">Time</div>
-                                        <div class="metric-value">${formatNumber(metrics.trainingTime)}s</div>
-                                    </div>
-                                </div>
+                        <div class="result-box">
+                            <p><strong>✓ ${result.message}</strong></p>
+                            <div class="row">
+                                <div class="col-3"><div class="metric-box">MAE<br><strong>${parseFloat(metrics.mae).toFixed(2)}</strong></div></div>
+                                <div class="col-3"><div class="metric-box">RMSE<br><strong>${parseFloat(metrics.rmse).toFixed(2)}</strong></div></div>
+                                <div class="col-3"><div class="metric-box">MAPE<br><strong>${parseFloat(metrics.mape).toFixed(2)}%</strong></div></div>
+                                <div class="col-3"><div class="metric-box">Thời gian<br><strong>${parseFloat(metrics.trainingTime).toFixed(2)}s</strong></div></div>
                             </div>
                         </div>
                     `;
                 } else {
-                    showError(result.message, 'lstmResult');
+                    showResult('lstmResult', result.message, true);
                 }
             } catch (error) {
-                showError('Training failed: ' + error.message, 'lstmResult');
+                showResult('lstmResult', `Lỗi: ${error.message}`, true);
             } finally {
-                isTraining = false;
                 document.getElementById('trainLSTMBtn').disabled = false;
             }
         });
-        
-        // Train ARIMA model
+
+        // 4. Huấn luyện ARIMA
         document.getElementById('trainARIMABtn').addEventListener('click', async () => {
-            if (isTraining) return;
-            isTraining = true;
-            
-            showLoading('arimaResult');
+            showLoading('arimaResult', 'Đang huấn luyện ARIMA...');
             document.getElementById('trainARIMABtn').disabled = true;
             
             try {
-                const response = await fetch('/train/arima', {
-                    method: 'POST'
-                });
-                
+                const response = await fetch('/train/arima', { method: 'POST' });
                 const result = await response.json();
                 
                 if (result.success) {
                     const metrics = result.metrics;
                     document.getElementById('arimaResult').innerHTML = `
-                        <div class="alert alert-success">
-                            <h6><i class="bi bi-check-circle"></i> ${result.message}</h6>
-                            <div class="row mt-3">
-                                <div class="col-6">
-                                    <div class="metric-card arima">
-                                        <div class="metric-label">MAE</div>
-                                        <div class="metric-value">${formatNumber(metrics.mae)}</div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="metric-card arima">
-                                        <div class="metric-label">RMSE</div>
-                                        <div class="metric-value">${formatNumber(metrics.rmse)}</div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="metric-card arima">
-                                        <div class="metric-label">MAPE</div>
-                                        <div class="metric-value">${formatNumber(metrics.mape)}%</div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="metric-card arima">
-                                        <div class="metric-label">Time</div>
-                                        <div class="metric-value">${formatNumber(metrics.trainingTime)}s</div>
-                                    </div>
-                                </div>
+                        <div class="result-box">
+                            <p><strong>✓ ${result.message}</strong></p>
+                            <div class="row">
+                                <div class="col-3"><div class="metric-box">MAE<br><strong>${parseFloat(metrics.mae).toFixed(2)}</strong></div></div>
+                                <div class="col-3"><div class="metric-box">RMSE<br><strong>${parseFloat(metrics.rmse).toFixed(2)}</strong></div></div>
+                                <div class="col-3"><div class="metric-box">MAPE<br><strong>${parseFloat(metrics.mape).toFixed(2)}%</strong></div></div>
+                                <div class="col-3"><div class="metric-box">Thời gian<br><strong>${parseFloat(metrics.trainingTime).toFixed(2)}s</strong></div></div>
                             </div>
                         </div>
                     `;
                 } else {
-                    showError(result.message, 'arimaResult');
+                    showResult('arimaResult', result.message, true);
                 }
             } catch (error) {
-                showError('Training failed: ' + error.message, 'arimaResult');
+                showResult('arimaResult', `Lỗi: ${error.message}`, true);
             } finally {
-                isTraining = false;
                 document.getElementById('trainARIMABtn').disabled = false;
             }
         });
-        
-        // Generate forecast
+
+        // 5. Tạo dự báo
         document.getElementById('generateForecastBtn').addEventListener('click', async () => {
             const hours = document.getElementById('forecastHours').value;
             
             if (!hours || hours < 1) {
-                showError('Please enter valid number of hours', 'forecastResult');
+                showResult('forecastResult', 'Vui lòng nhập số giờ hợp lệ', true);
                 return;
             }
             
-            showLoading('forecastResult');
+            showLoading('forecastResult', `Đang tạo dự báo ${hours} giờ...`);
             
             try {
                 const response = await fetch(`/forecast?hours=${hours}`);
@@ -639,87 +370,55 @@
                 
                 if (result.success) {
                     let html = `
-                        <div class="alert alert-success">
-                            <h6><i class="bi bi-check-circle"></i> ${result.message}</h6>
-                        </div>
-                        
-                        <div class="row mt-3">
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="card-header">
-                                        LSTM Forecast
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="forecast-value">
-                                            ${formatNumber(result.lstmForecast[0])}
-                                        </div>
-                                        <small>Next hour prediction</small>
-                                        <div class="mt-3">
-                                            <strong>Next 5 hours:</strong><br>
+                        <div class="result-box">
+                            <p><strong>✓ ${result.message}</strong></p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>LSTM Forecast</h6>
                     `;
                     
-                    // Show first 5 forecast values
-                    for (let i = 0; i < Math.min(5, result.lstmForecast.length); i++) {
-                        html += `Hour ${i+1}: ${formatNumber(result.lstmForecast[i])}<br>`;
+                    if (result.lstmForecast && result.lstmForecast.length > 0) {
+                        html += `<p>Giờ tiếp theo: <strong>${parseFloat(result.lstmForecast[0]).toFixed(2)}</strong></p>`;
+                        html += `<p>5 giờ đầu:</p><ul>`;
+                        for (let i = 0; i < Math.min(5, result.lstmForecast.length); i++) {
+                            html += `<li>Giờ ${i+1}: ${parseFloat(result.lstmForecast[i]).toFixed(2)}</li>`;
+                        }
+                        html += `</ul>`;
                     }
                     
                     html += `
-                                        </div>
-                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="card-header">
-                                        ARIMA Forecast
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="forecast-value">
-                                            ${formatNumber(result.arimaForecast[0])}
-                                        </div>
-                                        <small>Next hour prediction</small>
-                                        <div class="mt-3">
-                                            <strong>Next 5 hours:</strong><br>
+                                <div class="col-md-6">
+                                    <h6>ARIMA Forecast</h6>
                     `;
                     
-                    // Show first 5 forecast values
-                    for (let i = 0; i < Math.min(5, result.arimaForecast.length); i++) {
-                        html += `Hour ${i+1}: ${formatNumber(result.arimaForecast[i])}<br>`;
+                    if (result.arimaForecast && result.arimaForecast.length > 0) {
+                        html += `<p>Giờ tiếp theo: <strong>${parseFloat(result.arimaForecast[0]).toFixed(2)}</strong></p>`;
+                        html += `<p>5 giờ đầu:</p><ul>`;
+                        for (let i = 0; i < Math.min(5, result.arimaForecast.length); i++) {
+                            html += `<li>Giờ ${i+1}: ${parseFloat(result.arimaForecast[i]).toFixed(2)}</li>`;
+                        }
+                        html += `</ul>`;
                     }
                     
                     html += `
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     `;
-                    
-                    // Show plot if available
-                    if (result.plotImage) {
-                        html += `
-                            <div class="mt-4">
-                                <h6>Forecast Visualization</h6>
-                                <div class="plot-container">
-                                    ${result.plotImage}
-                                </div>
-                            </div>
-                        `;
-                    }
                     
                     document.getElementById('forecastResult').innerHTML = html;
                 } else {
-                    showError(result.message, 'forecastResult');
+                    showResult('forecastResult', result.message, true);
                 }
             } catch (error) {
-                showError('Forecast failed: ' + error.message, 'forecastResult');
+                showResult('forecastResult', `Lỗi: ${error.message}`, true);
             }
         });
-        
-        // Compare models
+
+        // 6. So sánh mô hình
         document.getElementById('compareModelsBtn').addEventListener('click', async () => {
-            showLoading('comparisonResult');
+            showLoading('comparisonResult', 'Đang so sánh mô hình...');
             
             try {
                 const response = await fetch('/compare');
@@ -730,97 +429,61 @@
                     const arima = result.arima;
                     
                     let html = `
-                        <div class="alert alert-info">
-                            <h6><i class="bi bi-trophy"></i> Model Comparison Results</h6>
-                            <p>Best Model: <strong>${result.bestModel}</strong> 
-                               (${formatNumber(result.improvement)}% better)</p>
-                        </div>
-                        
-                        <div class="row mt-3">
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="card-header">
-                                        LSTM Performance
-                                    </div>
-                                    <div class="card-body">
-                                        <table class="table">
-                                            <tr>
-                                                <td>MAE:</td>
-                                                <td><strong>${formatNumber(lstm.mae)}</strong></td>
-                                            </tr>
-                                            <tr>
-                                                <td>RMSE:</td>
-                                                <td><strong>${formatNumber(lstm.rmse)}</strong></td>
-                                            </tr>
-                                            <tr>
-                                                <td>MAPE:</td>
-                                                <td><strong>${formatNumber(lstm.mape)}%</strong></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Training Time:</td>
-                                                <td><strong>${formatNumber(lstm.trainingTime)}s</strong></td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="result-box">
+                            <h5>Kết quả so sánh</h5>
+                            <p>Mô hình tốt nhất: <strong>${result.bestModel}</strong> (tốt hơn ${parseFloat(result.improvement).toFixed(1)}%)</p>
                             
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="card-header">
-                                        ARIMA Performance
-                                    </div>
-                                    <div class="card-body">
-                                        <table class="table">
-                                            <tr>
-                                                <td>MAE:</td>
-                                                <td><strong>${formatNumber(arima.mae)}</strong></td>
-                                            </tr>
-                                            <tr>
-                                                <td>RMSE:</td>
-                                                <td><strong>${formatNumber(arima.rmse)}</strong></td>
-                                            </tr>
-                                            <tr>
-                                                <td>MAPE:</td>
-                                                <td><strong>${formatNumber(arima.mape)}%</strong></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Training Time:</td>
-                                                <td><strong>${formatNumber(arima.trainingTime)}s</strong></td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                </div>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Chỉ số</th>
+                                        <th>LSTM</th>
+                                        <th>ARIMA</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>MAE</td>
+                                        <td>${parseFloat(lstm.mae).toFixed(2)}</td>
+                                        <td>${parseFloat(arima.mae).toFixed(2)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>RMSE</td>
+                                        <td>${parseFloat(lstm.rmse).toFixed(2)}</td>
+                                        <td>${parseFloat(arima.rmse).toFixed(2)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>MAPE</td>
+                                        <td>${parseFloat(lstm.mape).toFixed(2)}%</td>
+                                        <td>${parseFloat(arima.mape).toFixed(2)}%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Thời gian huấn luyện</td>
+                                        <td>${parseFloat(lstm.trainingTime).toFixed(2)}s</td>
+                                        <td>${parseFloat(arima.trainingTime).toFixed(2)}s</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <div class="alert alert-info">
+                                <strong>Giải thích:</strong> 
+                                MAE, RMSE, MAPE càng nhỏ càng tốt. 
+                                Thời gian huấn luyện càng ngắn càng tốt.
                             </div>
-                        </div>
-                        
-                        <div class="alert alert-warning mt-3">
-                            <i class="bi bi-lightbulb"></i>
-                            <strong>Interpretation:</strong><br>
-                            - Lower MAE/RMSE/MAPE values indicate better accuracy<br>
-                            - Training time shows computational efficiency<br>
-                            - Choose the model based on your specific requirements
                         </div>
                     `;
                     
                     document.getElementById('comparisonResult').innerHTML = html;
                 } else {
-                    showError(result.message, 'comparisonResult');
+                    showResult('comparisonResult', result.message, true);
                 }
             } catch (error) {
-                showError('Comparison failed: ' + error.message, 'comparisonResult');
+                showResult('comparisonResult', `Lỗi: ${error.message}`, true);
             }
         });
-        
-        // Initialize tooltips
-        document.addEventListener('DOMContentLoaded', function() {
-            // Activate first tab
-            const firstTab = new bootstrap.Tab(document.getElementById('upload-tab'));
-            
-            // Show welcome message
-            console.log('Energy Forecast AI Application Loaded');
-            console.log('Upload energy consumption data to get started');
-        });
+
+        // Khởi tạo
+        console.log('Energy Forecast AI - Phiên bản đơn giản');
     </script>
 </body>
 </html>

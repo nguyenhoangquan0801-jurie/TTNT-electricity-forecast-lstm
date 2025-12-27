@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Forecast AI</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-top: 30px;
+            margin-bottom: 30px;
+            padding: 30px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 15px 20px;
+            font-weight: bold;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+        
+        .metric-card {
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 10px 0;
+        }
+        
+        .metric-card.lstm {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+        }
+        
+        .metric-card.arima {
+            background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+            color: white;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .metric-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .plot-container {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .nav-tabs {
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            color: #667eea;
+            font-weight: bold;
+            padding: 10px 20px;
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .forecast-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .data-table {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="bi bi-lightning-charge"></i> Energy Consumption Forecast AI</h1>
+            <p>Predict energy consumption using LSTM and ARIMA models</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload">
+                    <i class="bi bi-upload"></i> Upload Data
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="analyze-tab" data-bs-toggle="tab" data-bs-target="#analyze">
+                    <i class="bi bi-bar-chart"></i> Analyze
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="train-tab" data-bs-toggle="tab" data-bs-target="#train">
+                    <i class="bi bi-cpu"></i> Train Models
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="forecast-tab" data-bs-toggle="tab" data-bs-target="#forecast">
+                    <i class="bi bi-graph-up"></i> Forecast
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="compare-tab" data-bs-toggle="tab" data-bs-target="#compare">
+                    <i class="bi bi-trophy"></i> Compare
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="myTabContent">
+            
+            <!-- Upload Tab -->
+            <div class="tab-pane fade show active" id="upload" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        Upload Energy Consumption Data
+                    </div>
+                    <div class="card-body">
+                        <p>Upload your CSV file containing energy consumption data. The system will automatically analyze it.</p>
+                        
+                        <div class="alert alert-info">
+                            <strong>Note:</strong> You can download sample data from 
+                            <a href="https://www.kaggle.com/datasets/nicholasjhana/energy-consumption-generation-prices-and-weather" 
+                               target="_blank" class="alert-link">
+                                Kaggle Energy Dataset
+                            </a>
+                        </div>
+                        
+                        <form id="uploadForm">
+                            <div class="mb-3">
+                                <label for="fileInput" class="form-label">Select CSV File</label>
+                                <input class="form-control" type="file" id="fileInput" accept=".csv">
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-cloud-upload"></i> Upload & Process
+                            </button>
+                        </form>
+                        
+                        <div id="uploadResult" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analyze Tab -->
+            <div class="tab-pane fade" id="analyze" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        Data Analysis
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <button id="loadSummaryBtn" class="btn btn-primary">
+                                <i class="bi bi-eye"></i> Load Data Summary
+                            </button>
+                        </div>
+                        
+                        <div id="dataSummary"></div>
+                        
+                        <div class="alert alert-warning mt-3">
+                            <i class="bi bi-info-circle"></i>
+                            <strong>Note:</strong> This is a simplified demo. In a real application, 
+                            you would see interactive charts and detailed statistics here.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Train Tab -->
+            <div class="tab-pane fade" id="train" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                LSTM Model Training
+                            </div>
+                            <div class="card-body">
+                                <p>Long Short-Term Memory network for sequence prediction.</p>
+                                <button id="trainLSTMBtn" class="btn btn-primary w-100">
+                                    <i class="bi bi-play-circle"></i> Train LSTM Model
+                                </button>
+                                <div id="lstmResult" class="mt-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                ARIMA Model Training
+                            </div>
+                            <div class="card-body">
+                                <p>AutoRegressive Integrated Moving Average for time series.</p>
+                                <button id="trainARIMABtn" class="btn btn-danger w-100">
+                                    <i class="bi bi-play-circle"></i> Train ARIMA Model
+                                </button>
+                                <div id="arimaResult" class="mt-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Forecast Tab -->
+            <div class="tab-pane fade" id="forecast" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        Generate Forecast
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Forecast Horizon (hours)</label>
+                                <input type="number" id="forecastHours" class="form-control" value="24" min="1" max="168">
+                            </div>
+                            <div class="col-md-6 d-flex align-items-end">
+                                <button id="generateForecastBtn" class="btn btn-success w-100">
+                                    <i class="bi bi-lightning"></i> Generate Forecast
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="forecastResult"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compare Tab -->
+            <div class="tab-pane fade" id="compare" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        Model Comparison
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <button id="compareModelsBtn" class="btn btn-primary">
+                                <i class="bi bi-arrow-repeat"></i> Compare Models
+                            </button>
+                        </div>
+                        
+                        <div id="comparisonResult"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Global state
+        let currentData = null;
+        let isTraining = false;
+        
+        // Show loading spinner
+        function showLoading(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Processing...</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Show error message
+        function showError(message, elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i> ${message}
+                    </div>
+                `;
+            }
+        }
+        
+        // Show success message
+        function showSuccess(message, elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = `
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle"></i> ${message}
+                    </div>
+                `;
+            }
+        }
+        
+        // Format number
+        function formatNumber(num) {
+            return parseFloat(num).toFixed(2);
+        }
+        
+        // Upload form handler
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showError('Please select a file first', 'uploadResult');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            showLoading('uploadResult');
+            
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentData = result;
+                    showSuccess(result.message, 'uploadResult');
+                    
+                    // Switch to analyze tab
+                    const analyzeTab = new bootstrap.Tab(document.getElementById('analyze-tab'));
+                    analyzeTab.show();
+                    
+                } else {
+                    showError(result.message, 'uploadResult');
+                }
+            } catch (error) {
+                showError('Upload failed: ' + error.message, 'uploadResult');
+            }
+        });
+        
+        // Load data summary
+        document.getElementById('loadSummaryBtn').addEventListener('click', async () => {
+            showLoading('dataSummary');
+            
+            try {
+                const response = await fetch('/summary');
+                const result = await response.json();
+                
+                if (result.success) {
+                    const summary = result.data;
+                    let html = `
+                        <div class="card">
+                            <div class="card-body">
+                                <h5>Data Summary</h5>
+                                <table class="table">
+                                    <tr>
+                                        <th>Filename:</th>
+                                        <td>${result.filename}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Target Column:</th>
+                                        <td>${result.targetColumn}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Row Count:</th>
+                                        <td>${summary.rowCount}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Column Count:</th>
+                                        <td>${summary.columnCount}</td>
+                                    </tr>
+                                </table>
+                    `;
+                    
+                    if (summary.statistics) {
+                        html += `<h6 class="mt-4">Statistics</h6>`;
+                        for (const [column, stats] of Object.entries(summary.statistics)) {
+                            html += `
+                                <div class="mb-2">
+                                    <strong>${column}:</strong><br>
+                                    Mean: ${formatNumber(stats.mean)} | 
+                                    Min: ${formatNumber(stats.min)} | 
+                                    Max: ${formatNumber(stats.max)}
+                                </div>
+                            `;
+                        }
+                    }
+                    
+                    html += `</div></div>`;
+                    document.getElementById('dataSummary').innerHTML = html;
+                } else {
+                    showError('No data loaded', 'dataSummary');
+                }
+            } catch (error) {
+                showError('Error loading summary: ' + error.message, 'dataSummary');
+            }
+        });
+        
+        // Train LSTM model
+        document.getElementById('trainLSTMBtn').addEventListener('click', async () => {
+            if (isTraining) return;
+            isTraining = true;
+            
+            showLoading('lstmResult');
+            document.getElementById('trainLSTMBtn').disabled = true;
+            
+            try {
+                const response = await fetch('/train/lstm', {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const metrics = result.metrics;
+                    document.getElementById('lstmResult').innerHTML = `
+                        <div class="alert alert-success">
+                            <h6><i class="bi bi-check-circle"></i> ${result.message}</h6>
+                            <div class="row mt-3">
+                                <div class="col-6">
+                                    <div class="metric-card lstm">
+                                        <div class="metric-label">MAE</div>
+                                        <div class="metric-value">${formatNumber(metrics.mae)}</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-card lstm">
+                                        <div class="metric-label">RMSE</div>
+                                        <div class="metric-value">${formatNumber(metrics.rmse)}</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-card lstm">
+                                        <div class="metric-label">MAPE</div>
+                                        <div class="metric-value">${formatNumber(metrics.mape)}%</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-card lstm">
+                                        <div class="metric-label">Time</div>
+                                        <div class="metric-value">${formatNumber(metrics.trainingTime)}s</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    showError(result.message, 'lstmResult');
+                }
+            } catch (error) {
+                showError('Training failed: ' + error.message, 'lstmResult');
+            } finally {
+                isTraining = false;
+                document.getElementById('trainLSTMBtn').disabled = false;
+            }
+        });
+        
+        // Train ARIMA model
+        document.getElementById('trainARIMABtn').addEventListener('click', async () => {
+            if (isTraining) return;
+            isTraining = true;
+            
+            showLoading('arimaResult');
+            document.getElementById('trainARIMABtn').disabled = true;
+            
+            try {
+                const response = await fetch('/train/arima', {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const metrics = result.metrics;
+                    document.getElementById('arimaResult').innerHTML = `
+                        <div class="alert alert-success">
+                            <h6><i class="bi bi-check-circle"></i> ${result.message}</h6>
+                            <div class="row mt-3">
+                                <div class="col-6">
+                                    <div class="metric-card arima">
+                                        <div class="metric-label">MAE</div>
+                                        <div class="metric-value">${formatNumber(metrics.mae)}</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-card arima">
+                                        <div class="metric-label">RMSE</div>
+                                        <div class="metric-value">${formatNumber(metrics.rmse)}</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-card arima">
+                                        <div class="metric-label">MAPE</div>
+                                        <div class="metric-value">${formatNumber(metrics.mape)}%</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-card arima">
+                                        <div class="metric-label">Time</div>
+                                        <div class="metric-value">${formatNumber(metrics.trainingTime)}s</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    showError(result.message, 'arimaResult');
+                }
+            } catch (error) {
+                showError('Training failed: ' + error.message, 'arimaResult');
+            } finally {
+                isTraining = false;
+                document.getElementById('trainARIMABtn').disabled = false;
+            }
+        });
+        
+        // Generate forecast
+        document.getElementById('generateForecastBtn').addEventListener('click', async () => {
+            const hours = document.getElementById('forecastHours').value;
+            
+            if (!hours || hours < 1) {
+                showError('Please enter valid number of hours', 'forecastResult');
+                return;
+            }
+            
+            showLoading('forecastResult');
+            
+            try {
+                const response = await fetch(`/forecast?hours=${hours}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    let html = `
+                        <div class="alert alert-success">
+                            <h6><i class="bi bi-check-circle"></i> ${result.message}</h6>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        LSTM Forecast
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="forecast-value">
+                                            ${formatNumber(result.lstmForecast[0])}
+                                        </div>
+                                        <small>Next hour prediction</small>
+                                        <div class="mt-3">
+                                            <strong>Next 5 hours:</strong><br>
+                    `;
+                    
+                    // Show first 5 forecast values
+                    for (let i = 0; i < Math.min(5, result.lstmForecast.length); i++) {
+                        html += `Hour ${i+1}: ${formatNumber(result.lstmForecast[i])}<br>`;
+                    }
+                    
+                    html += `
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        ARIMA Forecast
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="forecast-value">
+                                            ${formatNumber(result.arimaForecast[0])}
+                                        </div>
+                                        <small>Next hour prediction</small>
+                                        <div class="mt-3">
+                                            <strong>Next 5 hours:</strong><br>
+                    `;
+                    
+                    // Show first 5 forecast values
+                    for (let i = 0; i < Math.min(5, result.arimaForecast.length); i++) {
+                        html += `Hour ${i+1}: ${formatNumber(result.arimaForecast[i])}<br>`;
+                    }
+                    
+                    html += `
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Show plot if available
+                    if (result.plotImage) {
+                        html += `
+                            <div class="mt-4">
+                                <h6>Forecast Visualization</h6>
+                                <div class="plot-container">
+                                    ${result.plotImage}
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    document.getElementById('forecastResult').innerHTML = html;
+                } else {
+                    showError(result.message, 'forecastResult');
+                }
+            } catch (error) {
+                showError('Forecast failed: ' + error.message, 'forecastResult');
+            }
+        });
+        
+        // Compare models
+        document.getElementById('compareModelsBtn').addEventListener('click', async () => {
+            showLoading('comparisonResult');
+            
+            try {
+                const response = await fetch('/compare');
+                const result = await response.json();
+                
+                if (result.success) {
+                    const lstm = result.lstm;
+                    const arima = result.arima;
+                    
+                    let html = `
+                        <div class="alert alert-info">
+                            <h6><i class="bi bi-trophy"></i> Model Comparison Results</h6>
+                            <p>Best Model: <strong>${result.bestModel}</strong> 
+                               (${formatNumber(result.improvement)}% better)</p>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        LSTM Performance
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table">
+                                            <tr>
+                                                <td>MAE:</td>
+                                                <td><strong>${formatNumber(lstm.mae)}</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td>RMSE:</td>
+                                                <td><strong>${formatNumber(lstm.rmse)}</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td>MAPE:</td>
+                                                <td><strong>${formatNumber(lstm.mape)}%</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Training Time:</td>
+                                                <td><strong>${formatNumber(lstm.trainingTime)}s</strong></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        ARIMA Performance
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table">
+                                            <tr>
+                                                <td>MAE:</td>
+                                                <td><strong>${formatNumber(arima.mae)}</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td>RMSE:</td>
+                                                <td><strong>${formatNumber(arima.rmse)}</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td>MAPE:</td>
+                                                <td><strong>${formatNumber(arima.mape)}%</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Training Time:</td>
+                                                <td><strong>${formatNumber(arima.trainingTime)}s</strong></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-warning mt-3">
+                            <i class="bi bi-lightbulb"></i>
+                            <strong>Interpretation:</strong><br>
+                            - Lower MAE/RMSE/MAPE values indicate better accuracy<br>
+                            - Training time shows computational efficiency<br>
+                            - Choose the model based on your specific requirements
+                        </div>
+                    `;
+                    
+                    document.getElementById('comparisonResult').innerHTML = html;
+                } else {
+                    showError(result.message, 'comparisonResult');
+                }
+            } catch (error) {
+                showError('Comparison failed: ' + error.message, 'comparisonResult');
+            }
+        });
+        
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            // Activate first tab
+            const firstTab = new bootstrap.Tab(document.getElementById('upload-tab'));
+            
+            // Show welcome message
+            console.log('Energy Forecast AI Application Loaded');
+            console.log('Upload energy consumption data to get started');
+        });
+    </script>
+</body>
+</html>

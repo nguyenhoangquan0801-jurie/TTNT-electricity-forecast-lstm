@@ -238,10 +238,10 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    showResult('uploadResult', ` ${result.message}`);
+                    showResult('uploadResult', `✓ ${result.message}`);
                     showAllSteps();
                 } else {
-                    showResult('uploadResult', ` ${result.message}`, true);
+                    showResult('uploadResult', `✗ ${result.message}`, true);
                 }
             } catch (error) {
                 showResult('uploadResult', `Lỗi: ${error.message}`, true);

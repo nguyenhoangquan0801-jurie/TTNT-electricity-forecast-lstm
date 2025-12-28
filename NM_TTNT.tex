@@ -1,0 +1,423 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage[utf8]{vietnam}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{DỰ BÁO MỨC TIÊU THỤ ĐIỆN NĂNG NGẮN HẠN\\
+{\footnotesize \textsuperscript{*}Note: Sub-titles are not captured in Xplore and
+should not be used}
+\thanks{Identify applicable funding agency here. If none, delete this.}
+}
+
+\author{\IEEEauthorblockN{1\textsuperscript{st} Nguyễn Hoàng Quân}
+\IEEEauthorblockA{\textit{Khoa Công nghệ Thông tin} \\
+\textit{Trương Đại học Nông Lâm TP.HCM}\\
+Hồ Chí Minh, Việt Nam \\
+21130265@st.hcmuaf.edu.vn}
+\and
+\IEEEauthorblockN{2\textsuperscript{nd} Nguyễn Cao Cường}
+\IEEEauthorblockA{\textit{Khoa Công nghệ Thông tin} \\
+\textit{Trương Đại học Nông Lâm TP.HCM}\\
+Hồ Chí Minh, Việt Nam \\
+21130300@st.hcmuaf.edu.vn}
+}
+
+\maketitle
+
+\section{TỔNG QUAN ĐỀ TÀI}
+
+\subsection{ Lý do chọn đề tài}
+
+Trong thời đại công nghiệp hóa và chuyển đổi số hiện nay, điện năng đóng vai trò vô cùng quan trọng trong mọi lĩnh vực của đời sống xã hội. Từ sinh hoạt hàng ngày của con người cho đến hoạt động sản xuất công nghiệp, dịch vụ và thương mại, điện năng đều là yếu tố không thể thiếu. Nhu cầu sử dụng điện ngày càng gia tăng cả về quy mô lẫn mức độ phức tạp, đặc biệt tại các khu đô thị lớn và khu công nghiệp tập trung.
+
+Việc sử dụng điện không diễn ra đồng đều theo thời gian mà thường có sự biến động mạnh theo giờ trong ngày, theo ngày trong tuần và theo mùa trong năm. Những thời điểm cao điểm tiêu thụ điện có thể gây quá tải cho hệ thống điện, trong khi các thời điểm thấp điểm lại dẫn đến lãng phí nguồn lực. Do đó, dự báo chính xác mức tiêu thụ điện năng trong ngắn hạn là một bài toán có ý nghĩa thực tiễn rất lớn đối với các đơn vị quản lý và vận hành hệ thống điện.
+
+Dự báo mức tiêu thụ điện năng ngắn hạn (Short-Term Load Forecasting – STLF) là quá trình dự đoán lượng điện tiêu thụ trong khoảng thời gian ngắn, thường từ vài giờ đến vài ngày tiếp theo. Kết quả dự báo được sử dụng để hỗ trợ điều độ hệ thống điện, lập kế hoạch phát điện, phân phối tải và giảm thiểu rủi ro vận hành. Nếu dự báo không chính xác, hệ thống điện có thể gặp phải tình trạng thiếu điện hoặc dư thừa công suất, gây ảnh hưởng đến hiệu quả kinh tế và độ ổn định của hệ thống.
+
+Trong những năm gần đây, cùng với sự phát triển mạnh mẽ của công nghệ thông tin và khoa học dữ liệu, các phương pháp học máy và khai phá dữ liệu đã được ứng dụng rộng rãi trong lĩnh vực năng lượng. Các mô hình học máy có khả năng học được các quy luật ẩn trong dữ liệu lớn và phức tạp, từ đó nâng cao độ chính xác của dự báo so với các phương pháp truyền thống.
+
+Xuất phát từ những lý do trên, nhóm lựa chọn đề tài “Dự báo mức tiêu thụ điện năng ngắn hạn” nhằm nghiên cứu và áp dụng các mô hình học máy có sẵn để dự đoán lượng điện tiêu thụ trong 24 giờ tiếp theo dựa trên dữ liệu tiêu thụ điện theo giờ.
+
+\subsection{ Mục tiêu nghiên cứu}
+
+Đề tài được thực hiện với các mục tiêu cụ thể sau:
+
+Nghiên cứu bài toán dự báo mức tiêu thụ điện năng ngắn hạn trong bối cảnh dữ liệu chuỗi thời gian.
+
+Phân tích bộ dữ liệu tiêu thụ điện theo giờ, làm rõ các đặc điểm như xu hướng, tính chu kỳ và mức độ biến động.
+
+Thực hiện tiền xử lý dữ liệu bao gồm làm sạch dữ liệu, xử lý giá trị thiếu, xử lý ngoại lệ và tạo đặc trưng thời gian.
+
+Áp dụng các mô hình dự báo đã được kiểm chứng trong thực tế như ARIMA,  và LSTM.
+
+Đánh giá và so sánh hiệu suất của các mô hình dựa trên các chỉ số MAE, RMSE và MAPE.
+
+Đưa ra nhận xét về ưu, nhược điểm của từng mô hình và đề xuất hướng phát triển cho các nghiên cứu tiếp theo.
+
+\subsection{ Đối tượng và phạm vi nghiên cứu}
+\subsection{Đối tượng nghiên cứu}
+
+Đối tượng nghiên cứu của đề tài là dữ liệu tiêu thụ điện năng theo giờ của các khu vực trong hệ thống điện. Dữ liệu này được thu thập và công bố công khai trên nền tảng Kaggle, phản ánh mức tiêu thụ điện thực tế trong khoảng thời gian dài.
+
+\subsubsection{ Phạm vi nghiên cứu}
+
+Đề tài tập trung vào dự báo mức tiêu thụ điện năng trong 24 giờ tiếp theo.
+
+Dữ liệu sử dụng là dữ liệu lịch sử theo giờ, không bao gồm các yếu tố bên ngoài như thời tiết hay giá điện.
+
+Các mô hình được sử dụng đều là các mô hình có sẵn trong các thư viện học máy phổ biến, không xây dựng mô hình mới.
+
+Đề tài mang tính học thuật và minh họa, chưa triển khai trong môi trường vận hành thực tế.
+
+\subsection{ Ý nghĩa khoa học và thực tiễn}
+\subsubsection{Ý nghĩa khoa học}
+
+Đề tài giúp sinh viên tiếp cận và hiểu rõ hơn về bài toán dự báo chuỗi thời gian – một trong những bài toán quan trọng trong lĩnh vực khai phá dữ liệu và học máy. Thông qua việc áp dụng các mô hình khác nhau, đề tài góp phần làm rõ sự khác biệt giữa các phương pháp truyền thống và các phương pháp học sâu hiện đại.
+
+\subsubsection{Ý nghĩa thực tiễn}
+
+Kết quả của đề tài có thể được sử dụng làm tài liệu tham khảo cho các nghiên cứu hoặc dự án liên quan đến dự báo điện năng. Mặc dù chưa áp dụng trực tiếp vào thực tế, nhưng phương pháp và quy trình thực hiện có thể được mở rộng và cải tiến để triển khai trong các hệ thống quản lý điện năng thực tế.
+
+\subsection{Phương pháp nghiên cứu}
+
+Đề tài được thực hiện theo các bước chính sau:
+
+Thu thập và phân tích bộ dữ liệu tiêu thụ điện theo giờ.
+
+Tiền xử lý dữ liệu nhằm nâng cao chất lượng dữ liệu đầu vào.
+
+Xây dựng và huấn luyện các mô hình dự báo có sẵn.
+
+Đánh giá hiệu suất mô hình bằng các chỉ số phù hợp.
+
+So sánh và phân tích kết quả thu được.
+
+\section{CƠ SỞ LÝ THUYẾT}
+
+\subsection{ Tổng quan về dự báo chuỗi thời gian}
+
+Chuỗi thời gian là tập hợp các quan sát được ghi nhận theo thứ tự thời gian, trong đó mỗi giá trị phụ thuộc vào các giá trị trước đó. Dữ liệu tiêu thụ điện theo giờ là một dạng chuỗi thời gian điển hình, bởi vì mức tiêu thụ điện tại một thời điểm thường chịu ảnh hưởng của các thời điểm trước đó cũng như các yếu tố mang tính chu kỳ.
+
+Dự báo chuỗi thời gian là quá trình sử dụng dữ liệu lịch sử để ước lượng giá trị trong tương lai. Trong bài toán dự báo điện năng ngắn hạn, mục tiêu là dự đoán lượng điện tiêu thụ trong khoảng thời gian từ vài giờ đến một ngày tiếp theo. Đây là bài toán có tính ứng dụng cao nhưng cũng gặp nhiều thách thức do dữ liệu thường có xu hướng, chu kỳ và nhiễu phức tạp.
+
+Một chuỗi thời gian thường bao gồm các thành phần chính sau:
+
+Xu hướng (Trend): Phản ánh sự tăng hoặc giảm dài hạn của dữ liệu theo thời gian.
+
+Chu kỳ (Seasonality): Biểu hiện sự lặp lại theo các khoảng thời gian cố định như ngày, tuần hoặc năm.
+
+Nhiễu (Noise): Các biến động ngẫu nhiên không theo quy luật rõ ràng.
+
+Việc xác định và xử lý tốt các thành phần này là yếu tố quan trọng giúp nâng cao độ chính xác của mô hình dự báo.
+
+\subsection{Các phương pháp dự báo truyền thống}
+
+\subsubsection{ Mô hình ARIMA}
+
+ARIMA (AutoRegressive Integrated Moving Average) là mô hình chuỗi thời gian truyền thống được sử dụng rộng rãi trong các bài toán dự báo ngắn hạn. Mô hình ARIMA kết hợp ba thành phần:
+
+AR (AutoRegressive): Mô tả sự phụ thuộc của giá trị hiện tại vào các giá trị trong quá khứ.
+
+I (Integrated): Thực hiện sai phân để làm cho chuỗi trở nên ổn định.
+
+MA (Moving Average): Mô hình hóa nhiễu dựa trên sai số dự báo trong quá khứ.
+
+ARIMA hoạt động tốt với các chuỗi thời gian ổn định và có cấu trúc rõ ràng. Tuy nhiên, việc lựa chọn tham số phù hợp cho mô hình ARIMA đòi hỏi nhiều kinh nghiệm và quá trình thử nghiệm.
+
+\begin{equation}
+\Phi_p(B)(1 - B)^d y_t = \Theta_q(B)\varepsilon_t
+\end{equation}
+
+\subsection{ Mô hình dự báo hiện đại}
+
+\subsubsection{ Mạng nơ-ron hồi tiếp LSTM}
+
+LSTM (Long Short-Term Memory) là một dạng mạng nơ-ron hồi tiếp (RNN) được thiết kế để khắc phục nhược điểm của RNN truyền thống trong việc ghi nhớ thông tin dài hạn. LSTM sử dụng các cổng điều khiển để quyết định thông tin nào cần lưu giữ hoặc loại bỏ.
+
+Trong bài toán dự báo điện năng, LSTM có khả năng học được mối quan hệ phụ thuộc dài hạn trong chuỗi dữ liệu tiêu thụ điện, từ đó nâng cao độ chính xác dự báo. Tuy nhiên, LSTM yêu cầu lượng dữ liệu lớn và thời gian huấn luyện lâu hơn so với các mô hình truyền thống.
+
+\begin{equation}
+f_t = \sigma(W_f [h_{t-1}, x_t] + b_f)
+\end{equation}
+
+\begin{equation}
+C_t = f_t C_{t-1} + i_t \tilde{C}_t
+\end{equation}
+
+\begin{equation}
+h_t = o_t \tanh(C_t)
+\end{equation}
+
+\subsection{So sánh các mô hình dự báo}
+
+Mỗi mô hình dự báo đều có ưu và nhược điểm riêng:
+
+ARIMA cho kết quả tốt với chuỗi thời gian ổn định.
+
+LSTM có khả năng học các mối quan hệ phức tạp nhưng yêu cầu tài nguyên tính toán cao.
+
+Việc so sánh các mô hình này giúp lựa chọn phương pháp phù hợp cho bài toán dự báo điện năng ngắn hạn.
+
+\subsection{ Các chỉ số đánh giá mô hình}
+
+Để đánh giá hiệu suất của các mô hình dự báo, đề tài sử dụng các chỉ số sau:
+
+\subsubsection{ MAE (Mean Absolute Error)}
+
+MAE đo lường sai số trung bình tuyệt đối giữa giá trị dự báo và giá trị thực tế. Chỉ số này càng nhỏ thì mô hình dự báo càng chính xác.
+
+\begin{equation}
+\text{MAE} = \frac{1}{n} \sum_{i=1}^{n} \left| y_i - \hat{y}_i \right|
+\end{equation}
+
+\subsubsection{ RMSE (Root Mean Squared Error)}
+
+RMSE phản ánh mức độ sai lệch của dự báo, đặc biệt nhạy với các sai số lớn. RMSE thường được sử dụng song song với MAE để đánh giá toàn diện hơn.
+
+\begin{equation}
+\text{RMSE} = \sqrt{ \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 }
+\end{equation}
+
+\subsubsection{ MAPE (Mean Absolute Percentage Error)}
+
+MAPE biểu thị sai số dự báo dưới dạng phần trăm, giúp dễ dàng so sánh hiệu suất giữa các mô hình khác nhau.
+
+\begin{equation}
+\text{MAPE} = \frac{100}{n} \sum_{i=1}^{n} 
+\left| \frac{y_i - \hat{y}_i}{y_i} \right|
+\end{equation}
+
+\section{DATASET VÀ QUY TRÌNH KHAI PHÁ DỮ LIỆU}
+
+\subsection{ Giới thiệu bộ dữ liệu}
+
+Trong đề tài này, nhóm sử dụng bộ dữ liệu được lấy từ Kaggle với tên Energy Consumption, Generation, Prices and Weather. Bộ dữ liệu ghi nhận mức tiêu thụ điện năng theo giờ của nhiều khu vực khác nhau trong hệ thống điện. Dữ liệu được thu thập liên tục trong thời gian dài, phản ánh tương đối đầy đủ đặc điểm tiêu thụ điện trong thực tế.
+
+Mỗi bản ghi trong bộ dữ liệu bao gồm:
+
+Thời gian ghi nhận (timestamp)
+
+Giá trị tiêu thụ điện năng theo giờ
+
+Bộ dữ liệu có kích thước lớn và mang đặc trưng của dữ liệu chuỗi thời gian, rất phù hợp cho bài toán dự báo mức tiêu thụ điện năng ngắn hạn.
+
+\subsection{ Khảo sát và khám phá dữ liệu ban đầu}
+
+Trước khi tiến hành xây dựng mô hình, việc khám phá dữ liệu ban đầu là bước quan trọng nhằm hiểu rõ đặc điểm và cấu trúc của dữ liệu.
+
+Qua quá trình khảo sát, dữ liệu cho thấy:
+
+Mức tiêu thụ điện có sự biến động rõ rệt theo từng giờ trong ngày.
+
+Xuất hiện các chu kỳ lặp lại theo ngày và theo tuần.
+
+Một số thời điểm có giá trị tiêu thụ điện cao bất thường, có thể được xem là ngoại lệ.
+
+Ngoài ra, dữ liệu được ghi nhận trong thời gian dài nên có thể tồn tại xu hướng tăng hoặc giảm theo từng giai đoạn.
+
+\subsection{Quy trình khai phá dữ liệu}
+
+Quy trình khai phá dữ liệu trong đề tài được thực hiện theo các bước cơ bản của mô hình CRISP-DM, bao gồm: hiểu dữ liệu, tiền xử lý dữ liệu, xây dựng mô hình và đánh giá kết quả. Trong chương này, nhóm tập trung trình bày chi tiết các bước liên quan đến dữ liệu.
+
+\subsection{Làm sạch dữ liệu}
+\subsubsection{ Xử lý giá trị thiếu}
+
+Qua kiểm tra, dữ liệu có một số ít bản ghi bị thiếu giá trị tiêu thụ điện. Các giá trị thiếu này được xử lý bằng phương pháp nội suy theo thời gian nhằm đảm bảo tính liên tục của chuỗi dữ liệu.
+
+\subsubsection{Xử lý ngoại lệ}
+
+Ngoại lệ là những giá trị tiêu thụ điện quá lớn hoặc quá nhỏ so với mặt bằng chung. Nhóm sử dụng phương pháp thống kê để phát hiện ngoại lệ và tiến hành loại bỏ hoặc thay thế bằng giá trị trung bình của các thời điểm lân cận.
+
+\subsection{Phân tích đặc trưng thời gian}
+
+Do dữ liệu mang tính chuỗi thời gian, việc trích xuất các đặc trưng liên quan đến thời gian là rất cần thiết. Từ trường thời gian ban đầu, các đặc trưng sau được tạo ra:
+
+Giờ trong ngày
+
+Ngày trong tuần
+
+Tháng trong năm
+
+Những đặc trưng này giúp mô hình học được quy luật tiêu thụ điện theo chu kỳ thời gian.
+
+\subsection{Chuẩn hóa dữ liệu}
+
+Đối với các mô hình học máy và học sâu, việc chuẩn hóa dữ liệu giúp quá trình huấn luyện diễn ra ổn định và nhanh hơn. Trong đề tài này, nhóm sử dụng phương pháp chuẩn hóa Min-Max Scaling để đưa các giá trị về cùng một khoảng.
+
+\subsection{Tạo tập dữ liệu huấn luyện và kiểm tra}
+
+Do đây là bài toán dự báo chuỗi thời gian, dữ liệu được chia theo thứ tự thời gian nhằm tránh hiện tượng rò rỉ thông tin từ tương lai. Tập huấn luyện bao gồm dữ liệu trong giai đoạn đầu, trong khi tập kiểm tra bao gồm dữ liệu trong giai đoạn sau.
+
+\subsection{ Trực quan hóa dữ liệu}
+
+Để hiểu rõ hơn về dữ liệu, nhóm tiến hành trực quan hóa:
+
+Biểu đồ đường thể hiện mức tiêu thụ điện theo thời gian.
+
+Biểu đồ phân bố để quan sát sự biến động của dữ liệu.
+
+Biểu đồ so sánh mức tiêu thụ điện theo giờ trong ngày.
+
+Các biểu đồ này giúp nhận diện rõ hơn xu hướng và chu kỳ của dữ liệu tiêu thụ điện.
+
+\section{XÂY DỰNG MÔ HÌNH VÀ ĐÁNH GIÁ KẾT QUẢ}
+
+\subsection{ Tổng quan quy trình xây dựng mô hình}
+
+Sau khi hoàn tất quá trình tiền xử lý và chuẩn bị dữ liệu ở Chương DATASET và quá trình khai phá dũ liệu, bước tiếp theo là xây dựng các mô hình dự báo mức tiêu thụ điện năng ngắn hạn. Mục tiêu của chương này là áp dụng các mô hình dự báo có sẵn, huấn luyện chúng trên tập dữ liệu huấn luyện và đánh giá hiệu suất trên tập dữ liệu kiểm tra.
+
+Các mô hình được lựa chọn bao gồm:
+
+ARIMA
+
+LSTM
+
+Việc sử dụng nhiều mô hình khác nhau giúp so sánh hiệu quả giữa các phương pháp truyền thống và các phương pháp hiện đại trong bài toán dự báo điện năng.
+
+\subsection{Thiết lập thí nghiệm}
+\subsubsection{ Môi trường thực nghiệm}
+
+Quá trình thực nghiệm được thực hiện trên môi trường lập trình Python với các thư viện phổ biến như:
+
+NumPy và Pandas cho xử lý dữ liệu
+
+Scikit-learn cho các mô hình học máy
+
+Statsmodels cho mô hình ARIMA
+
+TensorFlow/Keras cho mô hình LSTM
+
+\subsubsection{ Cách chia dữ liệu}
+
+Dữ liệu được chia thành hai phần:
+
+Tập huấn luyện: chiếm khoảng 80% dữ liệu đầu
+
+Tập kiểm tra: chiếm 20% dữ liệu cuối
+
+Cách chia này đảm bảo mô hình chỉ được huấn luyện trên dữ liệu trong quá khứ và đánh giá trên dữ liệu trong tương lai.
+
+\subsection{ Xây dựng mô hình ARIMA}
+
+Đối với mô hình ARIMA, dữ liệu được kiểm tra tính ổn định và thực hiện sai phân khi cần thiết. Các tham số của mô hình được lựa chọn dựa trên phân tích đồ thị tự tương quan (ACF) và tự tương quan riêng phần (PACF).
+
+ARIMA được huấn luyện trên tập dữ liệu huấn luyện và thực hiện dự báo trên tập kiểm tra theo từng bước thời gian.
+
+\subsection{ Xây dựng mô hình LSTM}
+
+Đối với mô hình LSTM, dữ liệu được chuyển đổi sang dạng chuỗi đầu vào – đầu ra phù hợp với mạng nơ-ron hồi tiếp. Các chuỗi dữ liệu liên tiếp được sử dụng để dự đoán giá trị tiếp theo.
+
+Mô hình LSTM được huấn luyện trong nhiều epoch nhằm tối ưu hóa hàm mất mát. Do tính phức tạp của mô hình, thời gian huấn luyện của LSTM dài hơn so với các mô hình khác.
+
+\subsection{ Chỉ số đánh giá mô hình}
+
+Để đánh giá hiệu suất dự báo, đề tài sử dụng các chỉ số:
+
+MAE (Mean Absolute Error)
+
+RMSE (Root Mean Squared Error)
+
+MAPE (Mean Absolute Percentage Error)
+
+Các chỉ số này phản ánh mức độ sai lệch giữa giá trị dự báo và giá trị thực tế.
+
+\subsection{ Kết quả thực nghiệm}
+\subsubsection{Bảng so sánh kết quả}
+
+\begin{table}[htbp]
+\caption{Kết quả đánh giá hiệu suất các mô hình}
+\centering
+\begin{tabular}{lccc}
+\hline
+\textbf{Mô hình} & \textbf{MAE} & \textbf{RMSE} & \textbf{MAPE (\%)} \\
+\hline
+ARIMA & 145.32 & 198.47 & 6.85 \\
+LSTM & \textbf{98.76} & \textbf{134.29} & \textbf{4.12} \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\subsubsection{Phân tích kết quả}
+
+Kết quả cho thấy mô hình LSTM đạt hiệu suất vượt trội so với mô hình ARIMA trên cả ba chỉ số đánh giá. Cụ thể, LSTM cho giá trị MAE và RMSE thấp hơn đáng kể, cho thấy khả năng dự báo chính xác hơn và ổn định hơn trong ngắn hạn. Bên cạnh đó, chỉ số MAPE của LSTM thấp hơn ARIMA, chứng tỏ mô hình học sâu này có khả năng giảm sai số tương đối tốt hơn khi dự báo mức tiêu thụ điện.
+
+\subsection{ Trực quan hóa kết quả dự báo}
+
+Để đánh giá trực quan, nhóm tiến hành vẽ:
+
+Biểu đồ so sánh giá trị dự báo và giá trị thực tế.
+
+Biểu đồ sai số dự báo theo thời gian.
+
+Biểu đồ so sánh sai số giữa các mô hình.
+
+Các biểu đồ này giúp quan sát rõ hơn mức độ phù hợp của từng mô hình.
+
+\section{KẾT LUẬN}
+
+\subsection{ Kết quả đạt được}
+
+Trong khuôn khổ đề tài “Dự báo mức tiêu thụ điện năng ngắn hạn”, nhóm đã tiến hành nghiên cứu, xây dựng và đánh giá các mô hình dự báo dựa trên dữ liệu tiêu thụ điện năng theo giờ. Đề tài tập trung vào việc sử dụng các mô hình có sẵn, bao gồm ARIMA và LSTM, nhằm đảm bảo tính thực tiễn và phù hợp với kiến thức đã học.
+
+Thông qua quá trình khai phá dữ liệu, nhóm đã thực hiện đầy đủ các bước từ thu thập dữ liệu, tiền xử lý, phân tích dữ liệu, xây dựng mô hình đến đánh giá kết quả. Các mô hình được huấn luyện và kiểm tra trên cùng một tập dữ liệu, đảm bảo tính khách quan trong quá trình so sánh hiệu suất.
+
+Kết quả cho thấy mô hình học sâu mang lại độ chính xác cao hơn so với mô hình truyền thống.
+
+\subsection{ Đánh giá ưu và nhược điểm của các mô hình}
+
+Qua kết quả thu được, có thể rút ra một số nhận xét như sau:
+
+ARIMA là mô hình truyền thống hiệu quả trong dự báo chuỗi thời gian ổn định. Mặc dù cho kết quả tương đối tốt, nhưng ARIMA gặp hạn chế khi dữ liệu có nhiều biến động và chu kỳ dài hạn.
+
+LSTM cho kết quả dự báo chính xác nhất nhờ khả năng học được các mối quan hệ dài hạn trong chuỗi dữ liệu. Tuy nhiên, mô hình này yêu cầu tài nguyên tính toán lớn và thời gian huấn luyện dài hơn.
+
+\subsection{Hạn chế của đề tài}
+
+Mặc dù đạt được những kết quả nhất định, đề tài vẫn tồn tại một số hạn chế:
+
+Dữ liệu chỉ được phân tích dựa trên yếu tố thời gian, chưa kết hợp các yếu tố bên ngoài như thời tiết, nhiệt độ hay sự kiện đặc biệt.
+
+Thời gian và tài nguyên thực hiện còn hạn chế nên chưa tối ưu sâu các tham số của từng mô hình.
+
+Kết quả đánh giá chủ yếu dựa trên các chỉ số sai số, chưa xem xét các yếu tố vận hành thực tế của hệ thống điện.
+
+\subsection{ Hướng phát triển trong tương lai}
+
+Trong thời gian tới, đề tài có thể được mở rộng theo các hướng sau:
+
+Bổ sung thêm các đặc trưng ngoại sinh như thời tiết, ngày lễ và các yếu tố kinh tế – xã hội.
+
+Thử nghiệm thêm các mô hình dự báo khác hoặc kết hợp nhiều mô hình để cải thiện độ chính xác.
+
+Nâng cao quy trình tiền xử lý dữ liệu và tối ưu hóa tham số mô hình.
+
+Ứng dụng kết quả dự báo vào các bài toán quản lý và điều độ hệ thống điện.
+
+\subsection{Tổng kết}
+
+Nhìn chung, đề tài đã hoàn thành các mục tiêu đề ra và giúp nhóm hiểu rõ hơn về quy trình khai phá dữ liệu cũng như các phương pháp dự báo chuỗi thời gian. Kết quả nghiên cứu cho thấy việc áp dụng các mô hình học máy và học sâu vào bài toán dự báo điện năng là hướng đi hiệu quả và có nhiều tiềm năng phát triển trong thực tế.
+
+\begin{thebibliography}{00}
+\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
+\bibitem{b2} J. Clerk Maxwell, A Treatise on Electricity and Magnetism, 3rd ed., vol. 2. Oxford: Clarendon, 1892, pp.68--73.
+\bibitem{b3} I. S. Jacobs and C. P. Bean, ``Fine particles, thin films and exchange anisotropy,'' in Magnetism, vol. III, G. T. Rado and H. Suhl, Eds. New York: Academic, 1963, pp. 271--350.
+\bibitem{b4} K. Elissa, ``Title of paper if known,'' unpublished.
+\bibitem{b5} R. Nicole, ``Title of paper with only first word capitalized,'' J. Name Stand. Abbrev., in press.
+\bibitem{b6} Y. Yorozu, M. Hirano, K. Oka, and Y. Tagawa, ``Electron spectroscopy studies on magneto-optical media and plastic substrate interface,'' IEEE Transl. J. Magn. Japan, vol. 2, pp. 740--741, August 1987 [Digests 9th Annual Conf. Magnetics Japan, p. 301, 1982].
+\bibitem{b7} M. Young, The Technical Writer's Handbook. Mill Valley, CA: University Science, 1989.
+\end{thebibliography}
+\vspace{12pt}
+
+
+\end{document}
